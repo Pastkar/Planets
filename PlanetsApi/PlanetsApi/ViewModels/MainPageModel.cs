@@ -1,24 +1,35 @@
 ﻿using MonkeyCacheExample.ViewModels;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using PlanetsApi.Models;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Net;
 using System.Net.Http;
+using System.Windows.Input;
+using Xamarin.Forms;
 
 namespace PlanetsApi.ViewModels
 {
     public class MainPageModel : BaseViewModel
     {
-        public List<Person> numbers { get; set; }
-        public MainPageModel() {
-            numbers = new List<Person>() {
-                new Person() { name = "1" },
-                new Person() { name = "2" },
-                new Person() { name = "3" },
-                new Person() { name = "4" }};
-            test();
-            
+        public Root allInformation { get; set; }
+        private ObservableCollection<Result> films;
+
+        public ObservableCollection<Result> Films
+        {
+            get { return films; }
+            private set
+            {
+                films = value;
+                NotyfyPropertyChanged("Films");
+            }
         }
-        public async void test()
+        public MainPageModel() { 
+            DowmloadAndParse();
+        }
+        public async void DowmloadAndParse()
         {
             HttpClient client = new HttpClient();
             HttpRequestMessage request = new HttpRequestMessage();
@@ -31,12 +42,9 @@ namespace PlanetsApi.ViewModels
             {
                 HttpContent responseContent = response.Content;
                 var json = await responseContent.ReadAsStringAsync();
-                var test = true;
+                allInformation = JsonConvert.DeserializeObject<Root>(json);
+                Films = allInformation.results;
             }
         }
-    }
-    public class Person
-    {
-        public string name { get; set; }
     }
 }

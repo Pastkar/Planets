@@ -1,4 +1,5 @@
-﻿using PlanetsApi.ViewModels;
+﻿using PlanetsApi.Models;
+using PlanetsApi.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +18,13 @@ namespace PlanetsApi.Views
         {
             InitializeComponent();
             BindingContext = new MainPageModel();
+        }
+
+        private async void OnItemSelected(Object sender, ItemTappedEventArgs e)
+        {
+            var planetDetalis = e.Item as Result;
+            await Navigation.PushModalAsync(new InformationPage(planetDetalis.name,planetDetalis.climate));
+
         }
     }
 }
